@@ -5,13 +5,19 @@ const app = express();
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 
+const router = express.Router()
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 
+
 const messages = require('./routes/classifieds');
+
 app.use('/classifieds', messages);
 
 const port = process.env.PORT || 3000;
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
