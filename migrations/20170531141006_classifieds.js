@@ -1,12 +1,11 @@
-
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('classifieds', function(table) {
     table.increments().primary();
-    table.string('title').notNullable().defaultTo('');
-    table.string('description').notNullable().defaultTo('');
+    table.string('title').notNullable();
+    table.string('description').notNullable();
     table.decimal('price').notNullable();
     table.string('item_image').notNullable();
-    table.timestamps(true, true).defaultTo(knex.fn.now());
+    table.timestamps(true, true);
   });
 };
 

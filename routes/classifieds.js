@@ -4,9 +4,6 @@ const router = express.Router();
 const knex = require('../knex')
 
 
-
-
-
 router.get('/', function(req, res) {
   knex('classifieds').then(function(messages) {
     res.send(messages);
