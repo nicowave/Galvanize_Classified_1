@@ -5,52 +5,102 @@ const knex = require('../knex')
 
 
 router.get('/', function(req, res) {
-  knex('classifieds').then(function(messages) {
-    res.send(messages);
-    console.log(messages);
-  }).catch(function(err) {
-    res.send(err);
-  });
-});
-
-router.get('/:id', function(req, res) {
   knex('classifieds')
-    .where({id: req.params.id})
-    .first()
-    .then(function(item) {
-      res.send(item);
+    .select('id', 'title', 'description', 'price', 'item_image')
+    .then(function(results) {
+      res.json(results)
+
     }).catch(function(err) {
-      res.send(err);
-    })
-})
-
-router.post('/', function(req, res) {
-  knex('classifieds').insert(req.body, '*').then(function(item) {
-    res.send(item);
-  }).catch(function(err) {
     res.send(err);
   });
 });
 
-router.delete('/:id', function(req, res) {
-  console.log(req.params.title)
-  let deletedItemTitle = req.params.title
-  knex('classifieds').where('id', req.params.id).first().del().then(function() {
-    res.send(`${deletedItemTitle} item deleted!`);
-  }).catch(function(err) {
-    res.send(err);
-  });
-});
 
-router.put('/:id', function(req, res) {
+// GET one particular 'item' object from the 'db' by its 'id'
+router.get('/:id', function(req, res) {
+  // assert & specify that id is always integer
+  let id = +req.params.id
   knex('classifieds')
-    .where('id', req.params.id)
-    .update(req.body)
-    .then(function() {
-      res.send("Classified Message Updated!")
+    .select('id', 'title', 'description', 'price', 'item_image')
+    .where('id', id)
+    .then(function(results) {
+      console.log(results[0]);
+      res.send(results[0]);
+
     }).catch(function(err) {
       res.send(err);
     });
 });
+
+
+// POST an 'item' object
+router.post('/', function(req, res) {
+  knex('classifieds')
+    .insert({
+      title: req.body.title,
+      description: req.body.description,
+      price: req.body.price,
+      item_image: req.body.item_image
+    }).returning(['id', 'title', 'description', 'price', 'item_image'])
+    .then(function(results) {
+      console.log(results[0]);
+      res.json(results[0])
+
+    }).catch(function(err) {
+    res.send(err);
+  });
+});
+
+
+
+
+
+
+
+router.patch('/:id', function(req, res) {
+  let id = +req.params.id
+
+  knex('classifieds')
+    .where('id', id)
+    .update({
+      title: req.body.title,
+      description: req.body.description,
+      price: req.body.price,
+      item_image: req.body.item_image
+    }).returning(['id', 'title', 'description', 'price', 'item_image'])
+    .then(function(results) {
+
+      console.log(results[0]);
+      res.json(results[0])
+
+    }).catch(function(err) {
+      res.send(err);
+    });
+});
+
+
+
+
+
+
+router.delete('/:id', function(req, res) {
+  let id = +req.params.id
+  // console.log(req.params.title)
+  // let deletedItemTitle = req.params.title
+  knex('classifieds')
+    .where('id', id)
+      .first()
+      .del()
+      .returning(['id', 'title', 'description', 'price', 'item_image'])
+        .then(function(results) {
+
+          console.log(results[0]);
+          res.json(results[0]);
+
+  }).catch(function(err) {
+    res.send(err);
+  });
+});
+
 
 module.exports = router;

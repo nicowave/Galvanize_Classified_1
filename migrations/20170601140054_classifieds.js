@@ -1,4 +1,6 @@
+
 exports.up = function(knex, Promise) {
+
   return knex.schema.createTable('classifieds', function(table) {
     table.increments().primary();
     table.string('title').notNullable();
@@ -11,5 +13,6 @@ exports.up = function(knex, Promise) {
 
 
 exports.down = function(knex, Promise) {
+  
     return knex.schema.dropTable('classifieds');
 };
